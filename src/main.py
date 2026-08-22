@@ -114,7 +114,7 @@ def load_existing_leads():
 
 
 def save_leads(leads):
-    fieldnames = [
+    base_fields = [
         "place_id",
         "name",
         "category",
@@ -134,7 +134,27 @@ def save_leads(leads):
         "first_seen",
         "last_seen",
         "notes",
+        "website_status",
+        "website_checked",
+        "booking_status",
+        "booking_url",
+        "booking_platform",
+        "booking_evidence",
     ]
+
+    # Collect any additional fields that may already exist.
+    all_fields = set(base_fields)
+
+    for lead in leads.values():
+        all_fields.update(lead.keys())
+
+    # Keep our standard fields first.
+    fieldnames = list(base_fields)
+
+    # Add any unexpected/new fields afterward.
+    for field in sorted(all_fields):
+        if field not in fieldnames:
+            fieldnames.append(field)
 
     with open(
         CSV_FILE,
@@ -146,13 +166,13 @@ def save_leads(leads):
         writer = csv.DictWriter(
             file,
             fieldnames=fieldnames,
+            extrasaction="ignore",
         )
 
         writer.writeheader()
 
         for lead in leads.values():
             writer.writerow(lead)
-
 
 def main():
     print("Searching Google Places...")
