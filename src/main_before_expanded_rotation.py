@@ -25,148 +25,67 @@ CSV_FILE = "data/leads.csv"
 
 
 # ============================================================
-# SEARCH ROTATION CONFIGURATION
+# SEARCH ROTATION
 # ============================================================
 
-SEARCH_GROUPS = [
+SEARCHES = [
     {
+        "area": "Al Reem Island",
         "category": "salon",
-        "search_types": [
-            "salons",
-            "ladies salons",
-            "beauty salons",
-            "beauty lounges",
-            "hair salons",
-            "nail salons",
-        ],
+        "query": "salons in Al Reem Island, Abu Dhabi",
     },
     {
+        "area": "Khalifa City",
+        "category": "salon",
+        "query": "salons in Khalifa City, Abu Dhabi",
+    },
+    {
+        "area": "Yas Island",
+        "category": "salon",
+        "query": "salons in Yas Island, Abu Dhabi",
+    },
+    {
+        "area": "Al Raha",
+        "category": "salon",
+        "query": "salons in Al Raha, Abu Dhabi",
+    },
+    {
+        "area": "Saadiyat Island",
+        "category": "salon",
+        "query": "salons in Saadiyat Island, Abu Dhabi",
+    },
+
+    {
+        "area": "Al Reem Island",
         "category": "spa",
-        "search_types": [
-            "spas",
-            "day spas",
-            "beauty spas",
-            "wellness spas",
-            "ladies spas",
-        ],
+        "query": "spas in Al Reem Island, Abu Dhabi",
     },
     {
-        "category": "beauty_studio",
-        "search_types": [
-            "beauty studios",
-            "beauty centers",
-            "beauty lounges",
-            "beauty clinics",
-        ],
+        "area": "Khalifa City",
+        "category": "spa",
+        "query": "spas in Khalifa City, Abu Dhabi",
     },
     {
-        "category": "nail_salon",
-        "search_types": [
-            "nail salons",
-            "nail studios",
-            "nail lounges",
-            "manicure pedicure salons",
-        ],
+        "area": "Yas Island",
+        "category": "spa",
+        "query": "spas in Yas Island, Abu Dhabi",
     },
     {
-        "category": "hair_salon",
-        "search_types": [
-            "hair salons",
-            "ladies hair salons",
-            "hair studios",
-            "hairdressers",
-        ],
+        "area": "Al Raha",
+        "category": "spa",
+        "query": "spas in Al Raha, Abu Dhabi",
     },
     {
-        "category": "barber",
-        "search_types": [
-            "barbers",
-            "barber shops",
-            "men's salons",
-            "mens grooming",
-        ],
+        "area": "Saadiyat Island",
+        "category": "spa",
+        "query": "spas in Saadiyat Island, Abu Dhabi",
     },
 ]
-
-
-AREAS = [
-    "Al Reem Island",
-    "Khalifa City",
-    "Yas Island",
-    "Al Raha",
-    "Saadiyat Island",
-    "Abu Dhabi City",
-]
-
-
-def build_searches():
-
-    searches = []
-
-    # Search-type-first rotation.
-    #
-    # Example:
-    #
-    # Day 1  → Al Reem → salons
-    # Day 2  → Khalifa → salons
-    # Day 3  → Yas → salons
-    # Day 4  → Al Raha → salons
-    # Day 5  → Saadiyat → salons
-    # Day 6  → Abu Dhabi → salons
-    #
-    # Then:
-    #
-    # Day 7  → Al Reem → ladies salons
-    # Day 8  → Khalifa → ladies salons
-    # etc.
-
-    for group in SEARCH_GROUPS:
-
-        category = group["category"]
-
-        for search_type in group["search_types"]:
-
-            for area in AREAS:
-
-                searches.append(
-                    {
-                        "area": area,
-                        "category": category,
-                        "search_type": search_type,
-                        "query": (
-                            f"{search_type} "
-                            f"in {area}, Abu Dhabi"
-                        ),
-                    }
-                )
-
-    return searches
-
-
-SEARCHES = build_searches()
 
 
 def get_todays_search():
 
-    rotation_start = datetime(
-        2026,
-        8,
-        28,
-    ).date()
-
-    today = datetime.now().date()
-
-    days_since_start = (
-        today - rotation_start
-    ).days
-
-    index = (
-        days_since_start
-        % len(SEARCHES)
-    )
-
-    return SEARCHES[index], index
-
+    # The rotation starts from this date.
     rotation_start = datetime(
         2026,
         8,
@@ -341,7 +260,6 @@ def main():
     search_query = search_config["query"]
     category = search_config["category"]
     area = search_config["area"]
-    search_type = search_config["search_type"]
 
     print("==========================================")
     print("Daily Lead Finder")
@@ -351,7 +269,6 @@ def main():
     )
     print(f"Area: {area}")
     print(f"Category: {category}")
-    print(f"Search type: {search_type}")
     print(f"Query: {search_query}")
     print("==========================================")
     print()
@@ -406,7 +323,7 @@ def main():
                     name,
                 ),
                 "category": category,
-                "area": area,
+    "area": area,
                 "address": details.get(
                     "formatted_address",
                     place.get(
