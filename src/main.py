@@ -1,6 +1,7 @@
 import csv
-import os
 from datetime import datetime
+import json
+import os
 
 import requests
 
@@ -22,7 +23,7 @@ PLACE_DETAILS_URL = (
 )
 
 CSV_FILE = "data/leads.csv"
-
+SEARCH_INFO_FILE = "data/last_search.json"
 
 # ============================================================
 # SEARCH ROTATION CONFIGURATION
@@ -332,11 +333,48 @@ def save_leads(leads):
         for lead in leads.values():
             writer.writerow(lead)
 
+
+
+
+def save_last_search(search_config, search_index):
+    data = {
+        "area": search_config["area"],
+        "category": search_config["category"],
+        "search_type": search_config["search_type"],
+        "query": search_config["query"],
+        "search_index": search_index,
+        "total_searches": len(SEARCHES),
+        "date": datetime.now().strftime("%Y-%m-%d"),
+    }
+
+    os.makedirs(
+        os.path.dirname(SEARCH_INFO_FILE),
+        exist_ok=True,
+    )
+
+    with open(
+        SEARCH_INFO_FILE,
+        "w",
+        encoding="utf-8",
+    ) as file:
+
+
+        json.dump(
+            data,
+            file,
+            indent=2,
+            ensure_ascii=False,
+        )
+
 def main():
 
     search_config, search_index = (
         get_todays_search()
     )
+    save_last_search(
+    search_config,
+    search_index,
+)
 
     search_query = search_config["query"]
     category = search_config["category"]
