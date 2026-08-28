@@ -23,92 +23,14 @@ PLACE_DETAILS_URL = (
 
 CSV_FILE = "data/leads.csv"
 
-
-# ============================================================
-# SEARCH ROTATION
-# ============================================================
-
-SEARCHES = [
-    {
-        "area": "Al Reem Island",
-        "category": "salon",
-        "query": "salons in Al Reem Island, Abu Dhabi",
-    },
-    {
-        "area": "Khalifa City",
-        "category": "salon",
-        "query": "salons in Khalifa City, Abu Dhabi",
-    },
-    {
-        "area": "Yas Island",
-        "category": "salon",
-        "query": "salons in Yas Island, Abu Dhabi",
-    },
-    {
-        "area": "Al Raha",
-        "category": "salon",
-        "query": "salons in Al Raha, Abu Dhabi",
-    },
-    {
-        "area": "Saadiyat Island",
-        "category": "salon",
-        "query": "salons in Saadiyat Island, Abu Dhabi",
-    },
-
-    {
-        "area": "Al Reem Island",
-        "category": "spa",
-        "query": "spas in Al Reem Island, Abu Dhabi",
-    },
-    {
-        "area": "Khalifa City",
-        "category": "spa",
-        "query": "spas in Khalifa City, Abu Dhabi",
-    },
-    {
-        "area": "Yas Island",
-        "category": "spa",
-        "query": "spas in Yas Island, Abu Dhabi",
-    },
-    {
-        "area": "Al Raha",
-        "category": "spa",
-        "query": "spas in Al Raha, Abu Dhabi",
-    },
-    {
-        "area": "Saadiyat Island",
-        "category": "spa",
-        "query": "spas in Saadiyat Island, Abu Dhabi",
-    },
-]
+SEARCH_QUERY = "salons in Al Reem Island, Abu Dhabi"
+CATEGORY = "salon"
+AREA = "Al Reem Island"
 
 
-def get_todays_search():
-
-    # The rotation starts from this date.
-    rotation_start = datetime(
-        2026,
-        8,
-        28,
-    ).date()
-
-    today = datetime.now().date()
-
-    days_since_start = (
-        today - rotation_start
-    ).days
-
-    index = (
-        days_since_start
-        % len(SEARCHES)
-    )
-
-    return SEARCHES[index], index
-
-
-def search_places(search_config):
+def search_places():
     params = {
-        "query": search_config["query"],
+        "query": SEARCH_QUERY,
         "key": API_KEY,
     }
 
@@ -128,6 +50,7 @@ def search_places(search_config):
         )
 
     return data.get("results", [])
+
 
 def get_place_details(place_id):
     params = {
@@ -252,30 +175,12 @@ def save_leads(leads):
             writer.writerow(lead)
 
 def main():
-
-    search_config, search_index = (
-        get_todays_search()
-    )
-
-    search_query = search_config["query"]
-    category = search_config["category"]
-    area = search_config["area"]
-
-    print("==========================================")
-    print("Daily Lead Finder")
-    print(
-        f"Search rotation: "
-        f"{search_index + 1}/{len(SEARCHES)}"
-    )
-    print(f"Area: {area}")
-    print(f"Category: {category}")
-    print(f"Query: {search_query}")
-    print("==========================================")
+    print("Searching Google Places...")
+    print(f"Query: {SEARCH_QUERY}")
     print()
 
-    search_results = search_places(
-        search_config
-    )
+    search_results = search_places()
+
     print(
         f"Google returned "
         f"{len(search_results)} businesses."
@@ -322,8 +227,8 @@ def main():
                     "name",
                     name,
                 ),
-                "category": category,
-    "area": area,
+                "category": CATEGORY,
+                "area": AREA,
                 "address": details.get(
                     "formatted_address",
                     place.get(
