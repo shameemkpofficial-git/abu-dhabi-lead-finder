@@ -52,6 +52,12 @@ jobs:
         run: |
           python src/telegram.py
 
+      - name: Test Gmail
+        env:
+          GMAIL_TOKEN_JSON: ${{ secrets.GMAIL_TOKEN_JSON }}
+        run: |
+          python src/gmail.py
+
       - name: Commit updated leads
         run: |
           git config user.name "github-actions[bot]"
